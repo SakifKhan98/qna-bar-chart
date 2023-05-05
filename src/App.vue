@@ -4,7 +4,7 @@ import rawData from '../utils/data.json'
 import { ref, watchEffect } from 'vue'
 
 const loadedData = ref(rawData.null)
-const xAxis = ref([])
+const mainChartXAxis = ref([])
 const rightAnswers = ref([])
 const wrongAnswers = ref([])
 
@@ -16,14 +16,39 @@ const subChartSeries = ref([
   }
 ])
 
-const updateXAxis = (xAxisValue) => {
-  subChartData.value.chartOptions = {
-    ...subChartData.value.chartOptions,
-    xaxis: {
-      categories: xAxisValue
+/** Function for formatting raw data loaded from api (in our case mock data file) to make it usable with chart */
+const formatMainChartData = (data) => {
+  for (let key in data) {
+    let totalAnswerCount = 0
+    const results = data[key].answers_histogram
+    const correctAnswers = data[key].correct_answers
+    let totalCorrectAnswer = 0
+    for (let resultKey in results) {
+      totalAnswerCount += results[resultKey]
     }
+    correctAnswers.map((correctAnswer) => {
+      totalCorrectAnswer += results[correctAnswer]
+    })
+    rightAnswers.value.push(totalCorrectAnswer)
+    wrongAnswers.value.push(totalAnswerCount - totalCorrectAnswer)
   }
 }
+/** Function for formatting the Axes names of the Main Chart (In our case Question Numbers below each bar) */
+const formatMainChartAxis = (data) => {
+  for (let key in data) {
+    mainChartXAxis.value.push(data[key].num)
+  }
+}
+/** Function for handling the event when a user click on any bar in the chart */
+const clickChartHandler = ({ event, chartContext, config }) => {
+  subChartSeries.value = [
+    {
+      data: []
+    }
+  ]
+  selectedQuestion.value = config.dataPointIndex + 1
+}
+/** Function for formatting data for showing in the respective SubChart after clicking on a bar in main Chart */
 const formatSubChartData = (selectedQuestionNo) => {
   if (selectedQuestionNo) {
     let subChartAxisData = []
@@ -43,19 +68,20 @@ const formatSubChartData = (selectedQuestionNo) => {
       subChartSeries.value[0].data.push(answersHistogram[key])
     }
     subChartSeriesCorrectAnswers.value = correctAnswers
-    updateXAxis(subChartAxisData)
+    updateSubChartXAxis(subChartAxisData)
   }
 }
-
-const clickChart = ({ event, chartContext, config }) => {
-  subChartSeries.value = [
-    {
-      data: []
+/** Function for updating SubChart axis names when clicking from one to another*/
+const updateSubChartXAxis = (xAxisValue) => {
+  subChartData.value.chartOptions = {
+    ...subChartData.value.chartOptions,
+    xaxis: {
+      categories: xAxisValue
     }
-  ]
-  selectedQuestion.value = config.dataPointIndex + 1
+  }
 }
-const mainChartData = {
+/** Chart Options & Other Data for main chart */
+const mainChartData = ref({
   series: [
     {
       name: 'Right Answers',
@@ -77,7 +103,7 @@ const mainChartData = {
       }
     },
     xaxis: {
-      categories: xAxis.value
+      categories: mainChartXAxis.value
     },
     tooltip: {
       x: {
@@ -94,8 +120,8 @@ const mainChartData = {
       show: false
     }
   }
-}
-
+})
+/** Chart Options & Other Data for mSubain chart */
 const subChartData = ref({
   chartOptions: {
     chart: {
@@ -160,32 +186,12 @@ const subChartData = ref({
     }
   }
 })
-const mainChartAxisNameMapping = (data) => {
-  for (let key in data) {
-    xAxis.value.push(data[key].num)
-  }
-}
-const formattingData = (data) => {
-  for (let key in data) {
-    let totalAnswerCount = 0
-    const results = data[key].answers_histogram
-    const correctAnswers = data[key].correct_answers
-    let totalCorrectAnswer = 0
-    for (let resultKey in results) {
-      totalAnswerCount += results[resultKey]
-    }
-    correctAnswers.map((correctAnswer) => {
-      totalCorrectAnswer += results[correctAnswer]
-    })
-    rightAnswers.value.push(totalCorrectAnswer)
-    wrongAnswers.value.push(totalAnswerCount - totalCorrectAnswer)
-  }
-}
-
+/** Used WatchEffect for formatting data for Main Chart when its loaded  */
 watchEffect(() => {
-  mainChartAxisNameMapping(loadedData.value)
-  formattingData(loadedData.value)
+  formatMainChartData(loadedData.value)
+  formatMainChartAxis(loadedData.value)
 })
+/** Used WatchEffect for formatting subchart data when selected question is changed by clicking on bar in main chart  */
 watchEffect(() => {
   formatSubChartData(selectedQuestion.value)
 })
@@ -201,7 +207,7 @@ watchEffect(() => {
     <div class="pr-6 border-r border-gray-400">
       <MyChart
         type="bar"
-        @clickChart="clickChart"
+        @clickChart="clickChartHandler"
         height="450"
         width="500"
         :options="mainChartData.chartOptions"
