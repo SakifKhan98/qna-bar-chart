@@ -1,5 +1,4 @@
 <template class="flex flex-row">
-  <!-- <pre>{{ series }}</pre> -->
   <ApexCharts
     @click="clickChart"
     :width="width"
@@ -21,8 +20,7 @@ const props = defineProps({
   },
   series: {
     type: Array,
-    // default: []
-    default: () => []
+    default: []
   },
   height: {
     type: [String, Number],
@@ -37,7 +35,7 @@ const props = defineProps({
     required: true
   }
 })
-// console.log(props.series)
+
 const clickChart = (event, chartContext, config) => {
   emit('clickChart', { event, chartContext, config })
 }
