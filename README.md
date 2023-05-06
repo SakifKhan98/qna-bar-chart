@@ -80,5 +80,3 @@ We can improve the app in several ways. Some of them are:
 2. We can use `computed` property of Vue to do the calculations for better caching and performance.
 3. We can breakdown the functions in the `App.vue` file to different (at least two - one for main chart, another for the breakdown chart) `composable` files to make the code more modular and re-usable.
 4. We can add Linter & Prettier for better code organization.
-
-## Project Setup
