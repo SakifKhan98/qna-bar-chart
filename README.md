@@ -2,23 +2,15 @@
 
 ### QnA Bar Chart
 
-<br />
-
 ## Project Description
 
 This is a simple front-end for a bar chart visualizing responses of students to a series of questions. It also demonstrates a breakdown of each questions using a different instance of the same chart component. It is build using `Vue3`, `ApexCharts`, `TailwindCSS`, and `Vite`.
-
-<br />
 
 ## Demo Video Link:
 
 [Demo video - QnA Bar Chart](https://drive.google.com/file/d/1sWR_9YlGwr7DbU37r7bdZ9w2y57Btbah/view?usp=share_link)
 
-<br />
-
 ## Getting Started
-
-<br />
 
 ### Cloning Repository
 
@@ -38,12 +30,6 @@ npm install
 
 ```sh
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
 ```
 
 You can check the features of the bar chart as shown in the above mentioned demo video.
