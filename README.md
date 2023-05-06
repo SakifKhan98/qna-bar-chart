@@ -6,6 +6,10 @@
 
 This is a simple front-end for a bar chart visualizing responses of students to a series of questions. It also demonstrates a breakdown of each questions using a different instance of the same chart component. It is build using `Vue3`, `ApexCharts`, `TailwindCSS`, and `Vite`.
 
+## Project Live Link:
+
+[Live Link - QnA Bar Chart](https://qna-bar-chart.netlify.app/)
+
 ## Demo Video Link:
 
 [Demo video - QnA Bar Chart](https://drive.google.com/file/d/1sWR_9YlGwr7DbU37r7bdZ9w2y57Btbah/view?usp=share_link)
